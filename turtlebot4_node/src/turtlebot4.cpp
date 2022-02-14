@@ -108,8 +108,8 @@ Turtlebot4::Turtlebot4(bool use_sim, Turtlebot4Model model) : Node("turtlebot4_n
   dock_client_ = std::make_unique<Turtlebot4Action<Dock>>(node_handle_, "dock");
   undock_client_ = std::make_unique<Turtlebot4Action<Undock>>(node_handle_, "undock");
   wall_follow_client_ = std::make_unique<Turtlebot4Action<WallFollow>>(node_handle_, "wall_follow");
-  estop_client_ = std::make_unique<Turtlebot4Service<EStop>>(node_handle_, "estop");
-  power_client_ = std::make_unique<Turtlebot4Service<Power>>(node_handle_, "power");
+  estop_client_ = std::make_unique<Turtlebot4Service<EStop>>(node_handle_, "e_stop");
+  power_client_ = std::make_unique<Turtlebot4Service<Power>>(node_handle_, "robot_power");
 
   function_callbacks_ = {
     {"Dock",        std::bind(&Turtlebot4::dock_function_callback, this)},
