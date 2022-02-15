@@ -57,6 +57,12 @@ Turtlebot4::Turtlebot4(bool use_sim, Turtlebot4Model model) : Node("turtlebot4_n
       rclcpp::SensorDataQoS(),
       std::bind(&Turtlebot4::battery_callback, this, std::placeholders::_1));
 
+  wheel_status_sub_ = this->create_subscription<irobot_create_msgs::msg::WheelStatus>(
+      "wheel_status",
+      rclcpp::SensorDataQoS(),
+      std::bind(&Turtlebot4::wheel_status_callback, this, std::placeholders::_1));
+
+  // Publishers
   ip_pub_ = this->create_publisher<std_msgs::msg::String>(
     "ip",
     rclcpp::QoS(rclcpp::KeepLast(10)));
