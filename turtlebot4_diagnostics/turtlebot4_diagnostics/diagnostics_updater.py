@@ -113,11 +113,11 @@ class Turtlebot4DiagnosticUpdater(Node):
         )
 
         # Initial values
-        self.battery_percentage = 1.0
-        self.battery_voltage = 16.0
-        self.wheels_enabled = True
-        self.is_docked = True
-        self.dock_visible = True
+        self.battery_percentage = 0.0
+        self.battery_voltage = 0.0
+        self.wheels_enabled = False
+        self.is_docked = False
+        self.dock_visible = False
         self.lidar_freq_bounds = {'min': 5, 'max': 10}
         self.camera_freq_bounds = {'min': 5, 'max': 60}
         self.imu_freq_bounds = {'min': 61, 'max': 63}
