@@ -49,14 +49,14 @@ def generate_launch_description():
 
     oakd_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([rgb_stereo_launch_file]),
-        launch_arguments=[('colorResolution', '1080p'),
-                          ('useVideo', False),
-                          ('usePreview', True),
-                          ('useDepth', True),
-                          ('previewWidth', 300),
-                          ('previewHeight', 300),
-                          ('publish_urdf', False),
-                          ('tf_prefix', tf_prefix)])
+        launch_arguments={'colorResolution': '1080p',
+                          'useVideo': False,
+                          'usePreview': True,
+                          'useDepth': True,
+                          'previewWidth': 300,
+                          'previewHeight': 300,
+                          'publish_urdf': False,
+                          'tf_prefix': tf_prefix}.items())
 
     ld = LaunchDescription()
     ld.add_action(declare_tf_prefix_cmd)
