@@ -30,7 +30,41 @@ from launch_ros.actions import Node
 import launch_ros.descriptions
 
 ARGUMENTS = [
-
+    DeclareLaunchArgument(
+        'tf_prefix',
+        default_value='oakd_pro',
+        description='The name of the camera. \
+                     It can be different from the camera model \
+                     and it will be used in naming TF.'),
+    DeclareLaunchArgument(
+        'publish_urdf',
+        default_value='False',
+        description='Whether to publish the urdf'),
+    DeclareLaunchArgument(
+        'colorResolution',
+        choices=['1080p', '4K'],
+        default_value='1080p',
+        description='The resolution of the color camera'),
+    DeclareLaunchArgument(
+        'useVideo',
+        default_value='False',
+        description='Whether to publish a video of color image'),
+    DeclareLaunchArgument(
+        'usePreview',
+        default_value='True',
+        description='Whether to publish a preview of color image'),
+    DeclareLaunchArgument(
+        'useDepth',
+        default_value='True',
+        description='Whether to publish the depth image'),
+    DeclareLaunchArgument(
+        'previewWidth',
+        default_value='300',
+        description='Width of preview image'),
+    DeclareLaunchArgument(
+        'previewHeight',
+        default_value='300',
+        description='Height of preview image')
 ]
 
 def generate_launch_description():
@@ -40,25 +74,17 @@ def generate_launch_description():
     rgb_stereo_launch_file = PathJoinSubstitution(
         [pkg_depthai_examples, 'launch', 'rgb_stereo_node.launch.py'])
 
-    tf_prefix = LaunchConfiguration('tf_prefix', default='oakd_pro')
-
-    declare_tf_prefix_cmd = DeclareLaunchArgument(
-        'tf_prefix',
-        default_value=tf_prefix,
-        description='The name of the camera. It can be different from the camera model and it will be used in naming TF.')
-
     oakd_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([rgb_stereo_launch_file]),
-        launch_arguments={'colorResolution': '1080p',
-                          'useVideo': False,
-                          'usePreview': True,
-                          'useDepth': True,
-                          'previewWidth': 300,
-                          'previewHeight': 300,
-                          'publish_urdf': False,
-                          'tf_prefix': tf_prefix}.items())
+        launch_arguments={'colorResolution': LaunchConfiguration('colorResolution'),
+                          'useVideo': LaunchConfiguration('useVideo'),
+                          'usePreview': LaunchConfiguration('usePreview'),
+                          'useDepth': LaunchConfiguration('useDepth'),
+                          'previewWidth': LaunchConfiguration('previewWidth'),
+                          'previewHeight': LaunchConfiguration('previewHeight'),
+                          'publish_urdf': LaunchConfiguration('publish_urdf'),
+                          'tf_prefix': LaunchConfiguration('tf_prefix')}.items())
 
-    ld = LaunchDescription()
-    ld.add_action(declare_tf_prefix_cmd)
+    ld = LaunchDescription(ARGUMENTS)
     ld.add_action(oakd_launch)
     return ld
