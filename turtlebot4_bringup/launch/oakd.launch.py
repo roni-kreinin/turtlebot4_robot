@@ -16,18 +16,13 @@
 # @author Roni Kreinin (rkreinin@clearpathrobotics.com)
 
 
-import os
-
 from ament_index_python.packages import get_package_share_directory
 
-from launch import launch_description_sources, LaunchDescription
+from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.conditions import LaunchConfigurationEquals
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
-from launch_ros.actions import Node
-import launch_ros.descriptions
 
 ARGUMENTS = [
     DeclareLaunchArgument(
@@ -59,11 +54,11 @@ ARGUMENTS = [
         description='Whether to publish the depth image'),
     DeclareLaunchArgument(
         'previewWidth',
-        default_value='300',
+        default_value='250',
         description='Width of preview image'),
     DeclareLaunchArgument(
         'previewHeight',
-        default_value='300',
+        default_value='250',
         description='Height of preview image')
 ]
 
