@@ -21,6 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ros_tests = turtlebot4_tests.ros_tests:main',
+            'emc_tests = turtlebot4_tests.emc_tests:main',
+            'multi_cam = turtlebot4_tests.multi_cam:main',
         ],
     },
 )

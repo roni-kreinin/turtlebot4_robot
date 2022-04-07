@@ -19,22 +19,11 @@
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions.declare_launch_argument import DeclareLaunchArgument
-from launch.conditions import LaunchConfigurationEquals
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 from launch_ros.actions import Node
-
-
-ARGUMENTS = [
-    DeclareLaunchArgument('use_sim', default_value='false',
-                          choices=['true', 'false'],
-                          description='use_sim'),
-    DeclareLaunchArgument('model', default_value='standard',
-                          choices=['standard', 'lite'],
-                          description='Turtlebot4 Model')
-]
-
 
 def generate_launch_description():
 
@@ -49,23 +38,22 @@ def generate_launch_description():
 
     turtlebot4_param_yaml_file = LaunchConfiguration('param_file')
 
-    turtlebot4_node = Node(
-        package='turtlebot4_node',
-        executable='turtlebot4_node',
-        parameters=[turtlebot4_param_yaml_file,
-                    {'model': LaunchConfiguration('model')}],
-        output='screen')
+    # Launch files
+    turtlebot4_robot_launch_file = PathJoinSubstitution(
+        [pkg_turtlebot4_bringup, 'launch', 'robot.launch.py'])
 
-    turtlebot4_base_node = Node(
-        package='turtlebot4_base',
-        executable='turtlebot4_base_node',
-        parameters=[turtlebot4_param_yaml_file],
-        output='screen',
-        condition=LaunchConfigurationEquals('model', 'standard')
-    )
+    standard_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([turtlebot4_robot_launch_file]),
+        launch_arguments=[('model', 'standard'),
+                          ('param_file', turtlebot4_param_yaml_file)])
 
-    ld = LaunchDescription(ARGUMENTS)
+    emc_tests = Node(
+         package='turtlebot4_tests',
+         executable='emc_tests',
+         output='screen')
+
+    ld = LaunchDescription()
     ld.add_action(param_file_cmd)
-    ld.add_action(turtlebot4_node)
-    ld.add_action(turtlebot4_base_node)
+    ld.add_action(standard_launch)
+    ld.add_action(emc_tests)
     return ld
