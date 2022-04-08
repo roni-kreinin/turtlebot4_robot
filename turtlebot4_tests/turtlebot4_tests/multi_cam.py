@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import time
 import cv2
 import depthai as dai
 import contextlib
@@ -73,11 +74,7 @@ def main():
         while True:
             for q_rgb, stream_name in q_rgb_list:
                 in_rgb = q_rgb.tryGet()
-                if in_rgb is not None:
-                    cv2.imshow(stream_name, in_rgb.getCvFrame())
-
-            if cv2.waitKey(1) == ord('q'):
-                break
+            time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
