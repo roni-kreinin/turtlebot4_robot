@@ -16,6 +16,7 @@
 #
 # @author Roni Kreinin (rkreinin@clearpathrobotics.com)
 
+import math
 import os
 import sys
 import time
@@ -69,8 +70,7 @@ class Tester():
 
         for i, test in enumerate(self.tests):
             print('{:d}. {}'.format(i + 1, test.name))
-        print('{:d}. All Tests'.format(len(self.tests) + 1))
-        print('{:d}. Exit'.format(len(self.tests) + 2))
+        print('{:d}. Exit'.format(len(self.tests) + 1))
         try:
             option = int(input('Select an option: '))
         except ValueError:
@@ -78,12 +78,8 @@ class Tester():
             self.showTestOptions()
 
         # Exit option
-        if option == len(self.tests) + 2:
+        if option == len(self.tests) + 1:
             sys.exit()
-        # All tests option
-        elif option == len(self.tests) + 1:
-            for index in range(len(self.tests)):
-                self.runTest(index)
         elif option > 0 and option <= len(self.tests):
             self.runTest(option - 1)
         else:
@@ -167,3 +163,28 @@ def logTestResults(file, name, results):
         f.write(output_result)
 
     f.close()
+
+
+def euler_from_quaternion(quaternion):
+    """
+    Converts quaternion (w in last place) to euler roll, pitch, yaw
+    quaternion = [x, y, z, w]
+    Bellow should be replaced when porting for ROS 2 Python tf_conversions is done.
+    """
+    x = quaternion.x
+    y = quaternion.y
+    z = quaternion.z
+    w = quaternion.w
+
+    sinr_cosp = 2 * (w * x + y * z)
+    cosr_cosp = 1 - 2 * (x * x + y * y)
+    roll = math.atan2(sinr_cosp, cosr_cosp)
+
+    sinp = 2 * (w * y - z * x)
+    pitch = math.asin(sinp)
+
+    siny_cosp = 2 * (w * z + x * y)
+    cosy_cosp = 1 - 2 * (y * y + z * z)
+    yaw = math.atan2(siny_cosp, cosy_cosp)
+
+    return roll, pitch, yaw
