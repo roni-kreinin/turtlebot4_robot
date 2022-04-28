@@ -16,12 +16,15 @@
 # @author Roni Kreinin (rkreinin@clearpathrobotics.com)
 
 
+from http.server import executable
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -33,6 +36,7 @@ def generate_launch_description():
     pkg_turtlebot4_bringup = get_package_share_directory('turtlebot4_bringup')
     pkg_turtlebot4_diagnostics = get_package_share_directory('turtlebot4_diagnostics')
     pkg_turtlebot4_description = get_package_share_directory('turtlebot4_description')
+    pkg_depthai_examples = get_package_share_directory('depthai_examples')
 
     param_file_cmd = DeclareLaunchArgument(
         'param_file',
@@ -53,7 +57,7 @@ def generate_launch_description():
     rplidar_launch_file = PathJoinSubstitution(
         [pkg_turtlebot4_bringup, 'launch', 'rplidar.launch.py'])
     oakd_launch_file = PathJoinSubstitution(
-        [pkg_turtlebot4_bringup, 'launch', 'oakd.launch.py'])
+        [pkg_depthai_examples, 'launch', 'mobilenet_publisher.launch.py'])
     description_launch_file = PathJoinSubstitution(
         [pkg_turtlebot4_description, 'launch', 'robot_description.launch.py']
     )
@@ -75,13 +79,20 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([description_launch_file]),
         launch_arguments=[('model', 'standard')])
 
+    followbot = Node(
+        package='turtlebot4_tests',
+        executable='followbot',
+        output='screen'
+    )
+
     ld = LaunchDescription()
     ld.add_action(cyclonedds_uri)
     ld.add_action(param_file_cmd)
     ld.add_action(standard_launch)
-    ld.add_action(teleop_launch)
-    ld.add_action(diagnostics_launch)
-    ld.add_action(rplidar_launch)
+    #ld.add_action(teleop_launch)
+    #ld.add_action(diagnostics_launch)
+    #ld.add_action(rplidar_launch)
     ld.add_action(oakd_launch)
     ld.add_action(description_launch)
+    ld.add_action(followbot)
     return ld
