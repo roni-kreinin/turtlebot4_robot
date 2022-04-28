@@ -57,7 +57,7 @@ def generate_launch_description():
     rplidar_launch_file = PathJoinSubstitution(
         [pkg_turtlebot4_bringup, 'launch', 'rplidar.launch.py'])
     oakd_launch_file = PathJoinSubstitution(
-        [pkg_depthai_examples, 'launch', 'mobilenet_publisher.launch.py'])
+        [pkg_depthai_examples, 'launch', 'mobile_publisher.launch.py'])
     description_launch_file = PathJoinSubstitution(
         [pkg_turtlebot4_description, 'launch', 'robot_description.launch.py']
     )
