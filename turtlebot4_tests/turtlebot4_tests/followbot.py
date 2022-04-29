@@ -43,6 +43,9 @@ from turtlebot4_msgs.msg import UserLed
 
 from geometry_msgs.msg import Twist
 
+from irobot_create_msgs.msg import AudioNote, AudioNoteVector
+
+from builtin_interfaces.msg import Duration
 
 class FollowBot(Node):
     UNKNOWN = 0
@@ -70,6 +73,8 @@ class FollowBot(Node):
 
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', qos_profile_system_default)
         self.user_led_pub = self.create_publisher(UserLed, '/hmi/led', qos_profile_sensor_data)
+        self.audio_pub = self.create_publisher(AudioNoteVector, '/cmd_audio', qos_profile_sensor_data)
+
 
     def mobilenetCallback(self, msg: Detection2DArray):
         if len(msg.detections) > 0:
@@ -95,7 +100,7 @@ class FollowBot(Node):
                     elif right_boundary < self.image_width / 2 - self.fwd_margin:
                         self.direction = self.FORWARD_LEFT
                     else:
-                        if bbox_size < 40000.0:
+                        if bbox_size < 50000.0:
                             self.direction = self.CENTER
                         else:
                             self.direction = self.STOP
@@ -116,10 +121,50 @@ class FollowBot(Node):
         msg.angular.z = angular_z
         msg.linear.x = linear_x
 
+        #self.detectAudio()
         self.cmd_vel_pub.publish(msg)
 
+    def detectAudio(self):
+        print("Playing note")
+
+        a = AudioNote()
+        a.frequency = 220
+        a.max_runtime.nanosec = 300000000
+
+        b = AudioNote()
+        b.frequency = 247
+        b.max_runtime.nanosec = 300000000
+
+        c = AudioNote()
+        c.frequency = 262
+        c.max_runtime.nanosec = 300000000
+
+        d = AudioNote()
+        d.frequency = 294
+        d.max_runtime.nanosec = 300000000
+
+        e = AudioNote()
+        e.frequency = 330
+        e.max_runtime.nanosec = 300000000
+
+        f = AudioNote()
+        f.frequency = 349
+        f.max_runtime.nanosec = 300000000
+
+        g = AudioNote()
+        g.frequency = 392
+        g.max_runtime.nanosec = 300000000
+
+        beep = AudioNote()
+        beep.frequency = 1760
+        beep.max_runtime.nanosec = 400000000
+
+        anotes = AudioNoteVector()
+        #anotes.notes = [a, b, c, d, e, f, g]
+        anotes.notes = [beep, beep, beep]
+        self.audio_pub.publish(anotes)
+
     def run(self):
-        msg = UserLed()
         while True:
             if self.direction == self.STOP:
                 self.drive(0.0, 0.0)
@@ -127,8 +172,8 @@ class FollowBot(Node):
                 self.led(1, 2, 1000, 1.0)
             elif self.direction == self.CENTER:
                 self.drive(0.3, 0.0)
-                self.led(0, 1, 1000, 0.5)
-                self.led(1, 1, 1000, 0.5)
+                self.led(0, 1, 1000, 1.0)
+                self.led(1, 1, 1000, 1.0)
             elif self.direction == self.LEFT:
                 self.drive(0.0, 0.35)
                 self.previous_direction = self.LEFT
@@ -158,7 +203,6 @@ class FollowBot(Node):
                     self.drive(0.0, -0.75)
                     self.led(0, 1, 500, 0.5)
                     self.led(1, 0, 500, 0.5)
-
             time.sleep(0.05)
 
 
